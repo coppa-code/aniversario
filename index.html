@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎂 Sistema Completo de Aniversários + WhatsApp</title>
+    <title>🎂 Sistema de Aniversários PM + WhatsApp</title>
     <style>
-        /* 🎨 CSS COMPLETO INTEGRADO */
+        /* 🎨 CSS COMPLETO MELHORADO */
         * {
             margin: 0;
             padding: 0;
@@ -61,6 +61,7 @@
             padding: 20px;
             margin-bottom: 30px;
             text-align: center;
+            transition: all 0.3s ease;
         }
 
         .system-status.connecting {
@@ -91,8 +92,8 @@
             gap: 10px;
         }
 
-        .twilio-config {
-            background: rgba(255, 255, 255, 0.7);
+        .timing-config {
+            background: rgba(255, 255, 255, 0.8);
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 25px;
@@ -113,40 +114,36 @@
             font-size: 0.9em;
         }
 
-        .config-group input {
+        .config-group input, .config-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #dee2e6;
             border-radius: 10px;
             font-size: 14px;
-            font-family: 'Courier New', monospace;
             background: white;
+            transition: all 0.3s ease;
         }
 
-        .config-group input:focus {
+        .config-group input:focus, .config-group select:focus {
             outline: none;
             border-color: #2196f3;
             box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+            transform: translateY(-1px);
         }
 
-        .twilio-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
+        .connection-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+            background: #dc3545;
+            transition: all 0.3s ease;
         }
 
-        .twilio-info-item {
-            background: rgba(255, 255, 255, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.9em;
-        }
-
-        .twilio-info-item strong {
-            color: #1976d2;
-            display: block;
-            margin-bottom: 5px;
+        .connection-indicator.connected {
+            background: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
         }
 
         .form-section, .list-section {
@@ -207,6 +204,19 @@
             transform: translateY(-2px);
         }
 
+        .graduation-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-right: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -221,6 +231,9 @@
             margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .btn:hover {
@@ -240,7 +253,7 @@
 
         .btn-danger {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 14px;
         }
 
@@ -262,6 +275,14 @@
 
         .btn-test:hover {
             box-shadow: 0 15px 30px rgba(255, 167, 38, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 15px 30px rgba(108, 117, 125, 0.4);
         }
 
         .birthday-item {
@@ -313,6 +334,9 @@
             margin-bottom: 12px;
             font-size: 1.4em;
             font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .birthday-info p {
@@ -349,6 +373,11 @@
 
         .days-until.tomorrow {
             background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+            animation: shake 0.5s infinite;
+        }
+
+        .days-until.notification-time {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
             animation: shake 0.5s infinite;
         }
 
@@ -390,6 +419,18 @@
             font-weight: 700;
             font-size: 1em;
             border: 2px solid;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -509,14 +550,25 @@
             overflow-y: auto;
         }
 
-        .config-warning {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            border: 2px solid #ffc107;
+        .config-info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border: 2px solid #17a2b8;
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
-            color: #856404;
+            color: #0c5460;
             font-weight: 600;
+        }
+
+        .timing-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-left: 10px;
         }
 
         @media (max-width: 768px) {
@@ -556,10 +608,6 @@
             .btn {
                 width: 100%;
             }
-
-            .twilio-info {
-                grid-template-columns: 1fr;
-            }
         }
 
         /* Animações extras */
@@ -581,65 +629,84 @@
     <div class="container">
         <!-- 🎂 HEADER -->
         <div class="header">
-            <h1>🎂 Sistema de Aniversários</h1>
-            <p>Sistema completo com WhatsApp automático via Twilio</p>
+            <h1>🎂 Sistema de Aniversários PM</h1>
+            <p>Sistema completo para Polícia Militar com WhatsApp automático</p>
         </div>
 
         <!-- 🔌 STATUS DO SISTEMA -->
         <div id="system-status" class="system-status connecting">
             <strong>🔄 Inicializando sistema...</strong>
-            <p>Conectando ao Firebase e configurando Twilio</p>
+            <p>Conectando ao Firebase e configurando WhatsApp</p>
         </div>
 
         <!-- 🚨 ALERTAS -->
         <div id="alert-container"></div>
 
-        <!-- 📱 PAINEL TWILIO -->
+        <!-- 📱 PAINEL WHATSAPP -->
         <div class="twilio-panel">
-            <h3>📱 Configuração WhatsApp + Twilio</h3>
+            <h3>📱 Sistema WhatsApp <span class="connection-indicator" id="twilio-status"></span></h3>
             
-            <div class="config-warning">
-                <strong>⚠️ IMPORTANTE:</strong> Configure suas credenciais Twilio abaixo para envios reais. 
-                Use suas credenciais originais da conta Twilio.
+            <div class="config-info">
+                <strong>✅ SISTEMA CONFIGURADO:</strong> WhatsApp pronto para envio automático de mensagens!
+                <span class="timing-indicator" id="timing-display">Carregando...</span>
+                <br>
+                <small style="color: #0c5460; margin-top: 10px; display: block;">
+                    📌 <strong>Exemplo:</strong> <span id="example-text">Aniversário amanhã → Envio hoje às 09:00</span>
+                </small>
             </div>
 
-            <div class="twilio-config">
-                <h4 style="margin-bottom: 20px; color: #1976d2;">🔧 Credenciais Twilio</h4>
+            <div class="timing-config">
+                <h4 style="margin-bottom: 20px; color: #1976d2;">⏰ Configurações de Envio</h4>
                 <div class="config-row">
                     <div class="config-group">
-                        <label for="twilio-sid">🆔 Account SID:</label>
-                        <input type="text" id="twilio-sid" value="ACbdbb222bea4e9a291bf7b7fe53ed07c1" placeholder="Seu Account SID">
+                        <label for="notification-timing">📅 Quando enviar:</label>
+                        <select id="notification-timing">
+                            <option value="same-day">No dia do aniversário</option>
+                            <option value="1-day" selected>1 dia antes (CONFIGURÁVEL)</option>
+                            <option value="2-days">2 dias antes</option>
+                            <option value="3-days">3 dias antes</option>
+                            <option value="1-week">1 semana antes</option>
+                            <option value="custom-hours">Personalizado (horas)</option>
+                            <option value="custom-days">Personalizado (dias)</option>
+                        </select>
                     </div>
                     <div class="config-group">
-                        <label for="twilio-token">🔑 Auth Token:</label>
-                        <input type="password" id="twilio-token" placeholder="Seu Auth Token">
+                        <label for="custom-value">⏱️ Valor personalizado:</label>
+                        <input type="number" id="custom-value" min="1" max="365" placeholder="Digite o valor..." disabled>
                     </div>
                 </div>
                 <div class="config-row">
                     <div class="config-group">
-                        <label for="twilio-from">📤 From (Twilio):</label>
-                        <input type="text" id="twilio-from" value="whatsapp:+14155238886" placeholder="whatsapp:+14155238886">
+                        <label for="notification-time">🕘 Horário de envio: <span id="time-help" style="color: #28a745; font-weight: bold;">(para 1 dia antes)</span></label>
+                        <input type="time" id="notification-time" value="09:00" style="border-color: #28a745; border-width: 3px;">
                     </div>
                     <div class="config-group">
-                        <label for="twilio-to">📥 To (Seu WhatsApp):</label>
-                        <input type="text" id="twilio-to" value="whatsapp:+557181478028" placeholder="whatsapp:+5571xxxxxxxxx">
+                        <label for="recipient-phone">📞 Número do destinatário:</label>
+                        <input type="tel" id="recipient-phone" value="+557181478028" placeholder="+5571xxxxxxxxx">
                     </div>
                 </div>
-                <button class="btn btn-test" onclick="saveCredentials()">💾 Salvar Credenciais</button>
+                <button class="btn btn-whatsapp" onclick="saveNotificationSettings()" style="font-size: 18px; padding: 20px 40px;">💾 SALVAR E PROGRAMAR</button>
+                <button class="btn btn-secondary" onclick="resetToDefaults()">🔄 Restaurar Padrão</button>
             </div>
 
             <div class="actions-bar">
-                <button class="btn btn-whatsapp" onclick="testTwilioConnection()">
-                    🧪 Testar Conexão Twilio
+                <button class="btn btn-whatsapp" onclick="testWhatsAppConnection()">
+                    🧪 Testar WhatsApp
                 </button>
                 <button class="btn btn-whatsapp" onclick="sendTestMessage()">
-                    📱 Enviar Teste WhatsApp
+                    📱 Enviar Teste
+                </button>
+                <button class="btn btn-whatsapp" onclick="sendImmediateTest()" style="background: linear-gradient(135deg, #ff4757, #ff3742);">
+                    🚀 TESTE IMEDIATO
                 </button>
                 <button class="btn btn-test" onclick="showWhatsAppPreview()">
                     👁️ Preview Mensagem
                 </button>
-                <button class="btn btn-test" onclick="checkTomorrowBirthdays()">
-                    🔍 Verificar Amanhã
+                <button class="btn btn-test" onclick="checkNotificationQueue()">
+                    🔍 Verificar Fila
+                </button>
+                <button class="btn btn-test" onclick="simulateAutomaticCheck()">
+                    🤖 Simulação Completa
                 </button>
             </div>
 
@@ -658,12 +725,12 @@
                 <div class="stat-label">Este Mês</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="next-birthday">-</div>
-                <div class="stat-label">Próximo em (dias)</div>
+                <div class="stat-number" id="next-notification">-</div>
+                <div class="stat-label">Próxima Notificação</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="tomorrow-count">-</div>
-                <div class="stat-label">Amanhã</div>
+                <div class="stat-number" id="notification-queue">-</div>
+                <div class="stat-label">Na Fila</div>
             </div>
         </div>
 
@@ -673,33 +740,58 @@
             <form id="birthday-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="name">👤 Nome Completo:</label>
-                        <input type="text" id="name" name="name" required placeholder="Digite o nome completo..." autocomplete="name">
+                        <label for="graduation">🎖️ Graduação:</label>
+                        <select id="graduation" name="graduation" required>
+                            <option value="">Selecione a graduação...</option>
+                            <option value="Cmt Geral PM">🌟 Cmt Geral PM</option>
+                            <option value="Cel PM">🎖️ Cel PM</option>
+                            <option value="Ten Cel PM">🎖️ Ten Cel PM</option>
+                            <option value="Maj PM">🎖️ Maj PM</option>
+                            <option value="Cap PM">🎖️ Cap PM</option>
+                            <option value="Ten PM">⭐ Ten PM</option>
+                            <option value="St PM">🔸 St PM</option>
+                            <option value="Sgt PM">🔸 Sgt PM</option>
+                            <option value="Cb PM">🔹 Cb PM</option>
+                            <option value="Sd PM">🔹 Sd PM</option>
+                        </select>
                     </div>
                     
                     <div class="form-group">
-                        <label for="phone">📱 WhatsApp:</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="+5571xxxxxxxxx" autocomplete="tel">
+                        <label for="name">👤 Nome Completo:</label>
+                        <input type="text" id="name" name="name" required placeholder="Digite o nome completo..." autocomplete="name">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="phone">📱 WhatsApp:</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+5571xxxxxxxxx" autocomplete="tel">
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="date">📅 Data de Nascimento:</label>
                         <input type="date" id="date" name="date" required>
                     </div>
-                    
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
                         <label for="relationship">👥 Relacionamento:</label>
                         <select id="relationship" name="relationship" required>
                             <option value="">Selecione o tipo...</option>
+                            <option value="Comando">🎖️ Comando</option>
+                            <option value="Colega de Trabalho">👥 Colega de Trabalho</option>
+                            <option value="Subordinado">📋 Subordinado</option>
+                            <option value="Superior">⭐ Superior</option>
                             <option value="Família">👨‍👩‍👧‍👦 Família</option>
                             <option value="Amigo">🤝 Amigo(a)</option>
-                            <option value="Trabalho">💼 Trabalho</option>
-                            <option value="Namorado(a)">💕 Namorado(a)</option>
-                            <option value="Conhecido">👋 Conhecido</option>
                             <option value="Outro">📝 Outro</option>
                         </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="unit">🏢 Unidade/Setor:</label>
+                        <input type="text" id="unit" name="unit" placeholder="Ex: 1º BPM, COPOM, etc..." autocomplete="organization">
                     </div>
                 </div>
                 
@@ -707,6 +799,7 @@
                     <button type="submit" class="btn">✨ Cadastrar Aniversário</button>
                     <button type="button" class="btn btn-test" onclick="clearForm()">🧹 Limpar</button>
                     <button type="button" class="btn btn-test" onclick="addTestBirthday()">🧪 Adicionar Teste</button>
+                    <button type="button" class="btn btn-secondary" onclick="importBirthdays()">📥 Importar</button>
                 </div>
             </form>
         </div>
@@ -718,8 +811,9 @@
             <div class="actions-bar">
                 <button class="btn btn-test" onclick="loadBirthdays()">🔄 Atualizar</button>
                 <button class="btn btn-test" onclick="exportBirthdays()">📤 Exportar</button>
-                <button class="btn btn-test" onclick="showUpcoming()">📅 Próximos 30 dias</button>
-                <button class="btn btn-whatsapp" onclick="simulateAutomaticCheck()">🤖 Simular Automático</button>
+                <button class="btn btn-test" onclick="showUpcoming()">📅 Próximos</button>
+                <button class="btn btn-test" onclick="filterBirthdays()">🔍 Filtrar</button>
+                <button class="btn btn-secondary" onclick="showStatistics()">📊 Relatório</button>
             </div>
 
             <div id="birthdays-container" class="loading">
@@ -728,11 +822,11 @@
         </div>
     </div>
 
-    <!-- 🚀 JAVASCRIPT COMPLETO INTEGRADO -->
+    <!-- 🚀 JAVASCRIPT COMPLETO MELHORADO -->
     <script type="module">
         // 🔥 FIREBASE IMPORTS
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, updateDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
         // ⚙️ CONFIGURAÇÃO GLOBAL
         const CONFIG = {
@@ -747,24 +841,33 @@
                 measurementId: "G-V8LDP9V7M1"
             },
             
-            // Twilio (carregadas dinamicamente)
+            // Twilio (configurado internamente - não visível para o usuário)
             twilio: {
                 accountSid: 'ACbdbb222bea4e9a291bf7b7fe53ed07c1',
-                authToken: '', // Será preenchido pelo usuário
+                authToken: 'b557d3dac419358af345f941f6449e93',
                 fromNumber: 'whatsapp:+14155238886',
-                toNumber: 'whatsapp:+557181478028'
+                toNumber: '+557181478028' // Será atualizado conforme configuração
+            },
+            
+            // Configurações de notificação
+            notification: {
+                timing: '1-day', // quando enviar
+                customValue: 1, // valor personalizado
+                sendTime: '09:00', // horário de envio
+                recipientPhone: '+557181478028' // número do destinatário
             },
             
             // Sistema
             app: null,
             db: null,
-            birthdays: []
+            birthdays: [],
+            isConnected: false
         };
 
         // 🎯 INICIALIZAÇÃO DO SISTEMA
         async function initializeSystem() {
             try {
-                showSystemStatus('connecting', '🔄 Inicializando...', 'Conectando Firebase e configurando Twilio...');
+                showSystemStatus('connecting', '🔄 Inicializando...', 'Conectando Firebase e configurando WhatsApp...');
                 
                 // Firebase
                 CONFIG.app = initializeApp(CONFIG.firebase);
@@ -773,10 +876,13 @@
                 // Testar conexão
                 await testFirebaseConnection();
                 
-                // Carregar credenciais salvas
-                loadSavedCredentials();
+                // Carregar configurações salvas
+                loadNotificationSettings();
                 
-                showSystemStatus('success', '✅ Sistema Online!', 'Firebase conectado • Configure suas credenciais Twilio');
+                // Configurar indicador de conexão
+                updateConnectionStatus(true);
+                
+                showSystemStatus('success', '✅ Sistema Online!', 'Firebase conectado • WhatsApp configurado • Sistema pronto!');
                 
                 // Carregar dados
                 await loadBirthdays();
@@ -784,53 +890,204 @@
                 // Setup eventos
                 setupEventListeners();
                 
-                console.log('🎂 Sistema completo inicializado!');
+                console.log('🎂 Sistema PM completo inicializado!');
                 
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
                 showSystemStatus('error', '❌ Erro!', `Falha: ${error.message}`);
+                updateConnectionStatus(false);
             }
         }
 
-        // 💾 GERENCIAR CREDENCIAIS
-        function saveCredentials() {
-            const sid = document.getElementById('twilio-sid').value.trim();
-            const token = document.getElementById('twilio-token').value.trim();
-            const from = document.getElementById('twilio-from').value.trim();
-            const to = document.getElementById('twilio-to').value.trim();
+        // ⚙️ CONFIGURAÇÕES DE NOTIFICAÇÃO
+        function loadNotificationSettings() {
+            const saved = localStorage.getItem('notification_settings');
+            if (saved) {
+                try {
+                    CONFIG.notification = { ...CONFIG.notification, ...JSON.parse(saved) };
+                    
+                    // Atualizar interface
+                    document.getElementById('notification-timing').value = CONFIG.notification.timing;
+                    document.getElementById('custom-value').value = CONFIG.notification.customValue;
+                    document.getElementById('notification-time').value = CONFIG.notification.sendTime;
+                    document.getElementById('recipient-phone').value = CONFIG.notification.recipientPhone;
+                    
+                    // Atualizar Twilio
+                    CONFIG.twilio.toNumber = CONFIG.notification.recipientPhone;
+                    
+                    updateTimingDisplay();
+                    toggleCustomValue();
+                } catch (e) {
+                    console.log('Erro ao carregar configurações:', e);
+                }
+            } else {
+                updateTimingDisplay();
+            }
+        }
 
-            if (!sid || !token || !from || !to) {
-                showAlert('❌ Preencha todas as credenciais Twilio', 'error');
+        window.saveNotificationSettings = function() {
+            const timing = document.getElementById('notification-timing').value;
+            const customValue = parseInt(document.getElementById('custom-value').value) || 1;
+            const sendTime = document.getElementById('notification-time').value;
+            const recipientPhone = document.getElementById('recipient-phone').value.trim();
+
+            // Validar telefone
+            if (!recipientPhone.match(/^\+55\d{10,11}$/)) {
+                showAlert('❌ Formato do telefone inválido. Use +5571xxxxxxxxx', 'error');
                 return;
             }
 
-            CONFIG.twilio = { accountSid: sid, authToken: token, fromNumber: from, toNumber: to };
+            CONFIG.notification = {
+                timing,
+                customValue,
+                sendTime,
+                recipientPhone
+            };
+
+            // Atualizar Twilio
+            CONFIG.twilio.toNumber = recipientPhone;
+
+            // Salvar localmente
+            localStorage.setItem('notification_settings', JSON.stringify(CONFIG.notification));
             
-            // Salvar localmente (em produção use variáveis de ambiente)
-            const credentials = { sid, from, to }; // NÃO salvar o token por segurança
-            document.cookie = `twilio_config=${JSON.stringify(credentials)}; max-age=86400; path=/`;
+            updateTimingDisplay();
             
-            showAlert('✅ Credenciais salvas! Token não é persistido por segurança.', 'success');
-            console.log('📱 Twilio configurado:', CONFIG.twilio.toNumber);
+            // Mensagem personalizada baseada na configuração
+            let confirmMessage = '';
+            if (timing === '1-day') {
+                confirmMessage = `✅ PROGRAMADO: Envio 1 dia antes às ${sendTime}!`;
+            } else if (timing === 'same-day') {
+                confirmMessage = `✅ PROGRAMADO: Envio no dia às ${sendTime}!`;
+            } else {
+                confirmMessage = `✅ Configurações salvas: ${timing}`;
+            }
+            
+            showAlert(confirmMessage, 'success');
+            
+            // Atualizar estatísticas
+            updateStats();
+            
+            console.log(`⏰ Sistema programado: ${timing} às ${sendTime}`);
+        };
+
+        window.resetToDefaults = function() {
+            if (confirm('🔄 Restaurar configurações padrão?\n\n• 1 dia antes\n• 09:00 AM\n• Seu telefone atual')) {
+                document.getElementById('notification-timing').value = '1-day';
+                document.getElementById('notification-time').value = '09:00';
+                document.getElementById('custom-value').value = '';
+                
+                toggleCustomValue();
+                saveNotificationSettings();
+                
+                showAlert('🔄 Configurações restauradas para o padrão!', 'success');
+            }
+        };
+
+        function updateTimingDisplay() {
+            const timing = CONFIG.notification.timing;
+            const customValue = CONFIG.notification.customValue;
+            const sendTime = CONFIG.notification.sendTime;
+            
+            let displayText = '';
+            let exampleText = '';
+            
+            switch(timing) {
+                case 'same-day':
+                    displayText = `No dia - ${sendTime}`;
+                    exampleText = `Aniversário hoje → Envio hoje às ${sendTime}`;
+                    break;
+                case '1-day':
+                    displayText = `1 dia antes - ${sendTime} ⭐`;
+                    exampleText = `Aniversário amanhã → Envio hoje às ${sendTime}`;
+                    break;
+                case '2-days':
+                    displayText = `2 dias antes - 09:00`;
+                    exampleText = `Aniversário em 2 dias → Envio hoje às 09:00`;
+                    break;
+                case '3-days':
+                    displayText = `3 dias antes - 09:00`;
+                    exampleText = `Aniversário em 3 dias → Envio hoje às 09:00`;
+                    break;
+                case '1-week':
+                    displayText = `1 semana antes - 09:00`;
+                    exampleText = `Aniversário em 7 dias → Envio hoje às 09:00`;
+                    break;
+                case 'custom-hours':
+                    displayText = `${customValue}h antes - ${sendTime}`;
+                    exampleText = `Aniversário hoje → Envio ${customValue}h antes às ${sendTime}`;
+                    break;
+                case 'custom-days':
+                    displayText = `${customValue} dias antes - ${sendTime}`;
+                    exampleText = `Aniversário em ${customValue} dias → Envio hoje às ${sendTime}`;
+                    break;
+            }
+            
+            document.getElementById('timing-display').textContent = displayText;
+            document.getElementById('example-text').textContent = exampleText;
+            
+            // Atualizar ajuda visual
+            const timeHelp = document.getElementById('time-help');
+            const timeInput = document.getElementById('notification-time');
+            
+            if (timing === '1-day' || timing.includes('custom')) {
+                timeHelp.style.display = 'inline';
+                timeInput.style.borderColor = '#28a745';
+                timeInput.style.borderWidth = '3px';
+                timeHelp.textContent = timing === '1-day' ? '(para 1 dia antes)' : '(para personalizado)';
+            } else {
+                timeHelp.style.display = 'none';
+                timeInput.style.borderColor = '#dee2e6';
+                timeInput.style.borderWidth = '2px';
+            }
         }
 
-        function loadSavedCredentials() {
-            const cookies = document.cookie.split(';');
-            const configCookie = cookies.find(c => c.trim().startsWith('twilio_config='));
+        function toggleCustomValue() {
+            const timing = document.getElementById('notification-timing').value;
+            const customInput = document.getElementById('custom-value');
+            const timeInput = document.getElementById('notification-time');
+            const timeHelp = document.getElementById('time-help');
             
-            if (configCookie) {
-                try {
-                    const config = JSON.parse(configCookie.split('=')[1]);
-                    document.getElementById('twilio-sid').value = config.sid;
-                    document.getElementById('twilio-from').value = config.from;
-                    document.getElementById('twilio-to').value = config.to;
-                    
-                    CONFIG.twilio.accountSid = config.sid;
-                    CONFIG.twilio.fromNumber = config.from;
-                    CONFIG.twilio.toNumber = config.to;
-                } catch (e) {
-                    console.log('Erro ao carregar configurações salvas:', e);
+            if (timing.includes('custom')) {
+                customInput.disabled = false;
+                customInput.required = true;
+                customInput.style.backgroundColor = 'white';
+                customInput.style.borderColor = '#28a745';
+                customInput.style.borderWidth = '3px';
+                
+                timeInput.style.borderColor = '#28a745';
+                timeInput.style.borderWidth = '3px';
+                timeHelp.style.display = 'inline';
+                timeHelp.textContent = '(para personalizado)';
+            } else {
+                customInput.disabled = true;
+                customInput.required = false;
+                customInput.style.backgroundColor = '#f8f9fa';
+                customInput.style.borderColor = '#dee2e6';
+                customInput.style.borderWidth = '2px';
+                
+                if (timing === '1-day') {
+                    timeInput.style.borderColor = '#28a745';
+                    timeInput.style.borderWidth = '3px';
+                    timeHelp.style.display = 'inline';
+                    timeHelp.textContent = '(para 1 dia antes)';
+                } else {
+                    timeInput.style.borderColor = '#dee2e6';
+                    timeInput.style.borderWidth = '2px';
+                    timeHelp.style.display = 'none';
                 }
+            }
+        }
+
+        // 🔌 ATUALIZAR STATUS DE CONEXÃO
+        function updateConnectionStatus(connected) {
+            CONFIG.isConnected = connected;
+            const indicator = document.getElementById('twilio-status');
+            if (connected) {
+                indicator.classList.add('connected');
+                indicator.title = 'WhatsApp conectado e funcionando';
+            } else {
+                indicator.classList.remove('connected');
+                indicator.title = 'Problemas de conexão';
             }
         }
 
@@ -849,7 +1106,7 @@
             if (type === 'success') {
                 setTimeout(() => {
                     statusEl.style.display = 'none';
-                }, 4000);
+                }, 5000);
             }
         }
 
@@ -860,12 +1117,57 @@
             
             const phoneInput = document.getElementById('phone');
             phoneInput.addEventListener('input', formatPhoneNumber);
+            
+            const recipientPhoneInput = document.getElementById('recipient-phone');
+            recipientPhoneInput.addEventListener('input', formatPhoneNumber);
+            
+            const timingSelect = document.getElementById('notification-timing');
+            timingSelect.addEventListener('change', toggleCustomValue);
+            
+            // Auto-save quando mudar horário ou configurações
+            const autoSaveInputs = ['notification-timing', 'notification-time', 'recipient-phone'];
+            autoSaveInputs.forEach(id => {
+                document.getElementById(id).addEventListener('change', autoSaveNotifications);
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        function autoSaveNotifications() {
+            // Auto-save após 1 segundo de inatividade
+            clearTimeout(window.autoSaveTimer);
+            window.autoSaveTimer = setTimeout(() => {
+                saveNotificationSettings();
+                showAlert('💾 Configurações salvas automaticamente!', 'success');
+            }, 1000);
+        }
+
+        function handleKeyboardShortcuts(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        saveNotificationSettings();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        loadBirthdays();
+                        break;
+                    case 't':
+                        e.preventDefault();
+                        if (e.shiftKey) sendTestMessage();
+                        else testWhatsAppConnection();
+                        break;
+                }
+            }
         }
 
         // 📱 FORMATAR NÚMERO DE TELEFONE
         function formatPhoneNumber(e) {
             let value = e.target.value.replace(/\D/g, '');
             
+            // Auto-adicionar código do país
             if (value && !value.startsWith('55')) {
                 value = '55' + value;
             }
@@ -881,25 +1183,48 @@
             
             const formData = new FormData(e.target);
             const birthdayData = {
+                graduation: formData.get('graduation'),
                 name: formData.get('name').trim(),
-                phone: formData.get('phone').trim(),
+                phone: formData.get('phone').replace(/\D/g, '').replace(/^(\d{2})/, '+$1'),
                 date: formData.get('date'),
                 relationship: formData.get('relationship'),
+                unit: formData.get('unit')?.trim() || '',
                 createdAt: new Date().toISOString(),
-                createdBy: 'web-interface'
+                createdBy: 'web-interface',
+                lastUpdated: new Date().toISOString(),
+                notifications: true
             };
 
             if (!validateBirthdayData(birthdayData)) return;
 
+            // Verificar duplicatas
+            const duplicate = CONFIG.birthdays.find(b => 
+                b.name.toLowerCase() === birthdayData.name.toLowerCase() ||
+                b.phone === birthdayData.phone
+            );
+
+            if (duplicate) {
+                if (!confirm(`⚠️ Já existe um cadastro para "${duplicate.name}" ou com este telefone. Continuar mesmo assim?`)) {
+                    return;
+                }
+            }
+
             try {
-                showAlert('🔄 Cadastrando aniversário...', 'warning');
+                showAlert('🔄 Cadastrando...', 'warning');
                 
                 await addDoc(collection(CONFIG.db, 'birthdays'), birthdayData);
                 
-                showAlert('✅ Aniversário cadastrado com sucesso!', 'success');
+                showAlert(`✅ ${birthdayData.graduation} ${birthdayData.name} cadastrado com sucesso!`, 'success');
+                
+                // Animação de sucesso
+                e.target.classList.add('success-animation');
+                setTimeout(() => e.target.classList.remove('success-animation'), 500);
                 
                 e.target.reset();
                 await loadBirthdays();
+                
+                // Focus no próximo campo
+                document.getElementById('graduation').focus();
                 
             } catch (error) {
                 console.error('❌ Erro ao cadastrar:', error);
@@ -909,21 +1234,32 @@
 
         // ✅ VALIDAR DADOS
         function validateBirthdayData(data) {
-            if (!data.phone.match(/^\+55\d{10,11}$/)) {
+            // Validar telefone
+            const phoneRegex = /^\+55\d{10,11}$/;
+            if (!phoneRegex.test(data.phone)) {
                 showAlert('❌ Formato de telefone inválido. Use +5571xxxxxxxxx', 'error');
                 return false;
             }
             
+            // Validar data
             const birthDate = new Date(data.date);
             const today = new Date();
+            const minDate = new Date();
+            minDate.setFullYear(today.getFullYear() - 120);
+            
             if (birthDate > today) {
                 showAlert('❌ Data de nascimento não pode ser futura', 'error');
                 return false;
             }
             
-            const age = today.getFullYear() - birthDate.getFullYear();
-            if (age > 120) {
-                showAlert('❌ Data de nascimento muito antiga', 'error');
+            if (birthDate < minDate) {
+                showAlert('❌ Data de nascimento muito antiga (máximo 120 anos)', 'error');
+                return false;
+            }
+            
+            // Validar nome
+            if (data.name.length < 2) {
+                showAlert('❌ Nome deve ter pelo menos 2 caracteres', 'error');
                 return false;
             }
             
@@ -950,6 +1286,8 @@
                 updateStats();
                 renderBirthdays();
                 
+                console.log(`📋 ${CONFIG.birthdays.length} aniversários carregados`);
+                
             } catch (error) {
                 console.error('❌ Erro ao carregar:', error);
                 document.getElementById('birthdays-container').innerHTML = `
@@ -959,31 +1297,53 @@
                         <button class="btn" onclick="loadBirthdays()">🔄 Tentar Novamente</button>
                     </div>
                 `;
+                updateConnectionStatus(false);
             }
         }
 
         // 📊 ATUALIZAR ESTATÍSTICAS
         function updateStats() {
             const currentMonth = new Date().getMonth();
+            
             const thisMonth = CONFIG.birthdays.filter(birthday => {
-                const birthdayMonth = new Date(birthday.date + 'T00:00:00').getMonth();
-                return birthdayMonth === currentMonth;
+                const birthdayDate = new Date(birthday.date + 'T00:00:00');
+                return birthdayDate.getMonth() === currentMonth;
             }).length;
 
-            const nextBirthday = CONFIG.birthdays.length > 0 ? Math.min(...CONFIG.birthdays.map(birthday => {
-                const days = calculateDaysUntilBirthday(birthday.date);
+            // Calcular próxima notificação baseada na configuração
+            const notificationQueue = CONFIG.birthdays.filter(birthday => {
+                return shouldSendNotification(birthday);
+            }).length;
+
+            const nextNotificationDays = CONFIG.birthdays.length > 0 ? Math.min(...CONFIG.birthdays.map(birthday => {
+                const days = calculateDaysUntilNotification(birthday.date);
                 return typeof days === 'number' ? days : 999;
             })) : 0;
 
-            const tomorrowBirthdays = CONFIG.birthdays.filter(birthday => {
-                const days = calculateDaysUntilBirthday(birthday.date);
-                return days === 1 || days === '⚠️ Amanhã!';
-            }).length;
+            // Animação dos números
+            animateNumber('total-birthdays', CONFIG.birthdays.length);
+            animateNumber('this-month', thisMonth);
+            animateNumber('next-notification', nextNotificationDays === 999 ? 0 : nextNotificationDays);
+            animateNumber('notification-queue', notificationQueue);
+        }
 
-            document.getElementById('total-birthdays').textContent = CONFIG.birthdays.length;
-            document.getElementById('this-month').textContent = thisMonth;
-            document.getElementById('next-birthday').textContent = nextBirthday === 999 ? '-' : nextBirthday;
-            document.getElementById('tomorrow-count').textContent = tomorrowBirthdays;
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent) || 0;
+            const increment = targetValue > currentValue ? 1 : -1;
+            const duration = 30;
+            
+            if (currentValue !== targetValue) {
+                let current = currentValue;
+                const timer = setInterval(() => {
+                    current += increment;
+                    element.textContent = current;
+                    
+                    if (current === targetValue) {
+                        clearInterval(timer);
+                    }
+                }, duration);
+            }
         }
 
         // 🎨 RENDERIZAR ANIVERSÁRIOS
@@ -994,9 +1354,12 @@
                 container.innerHTML = `
                     <div class="empty-state fade-in">
                         <h3>📝 Nenhum aniversário cadastrado</h3>
-                        <p>Cadastre o primeiro aniversário para começar!</p>
-                        <button class="btn" onclick="document.getElementById('name').focus()">
+                        <p>Cadastre o primeiro aniversário da PM para começar!</p>
+                        <button class="btn" onclick="document.getElementById('graduation').focus()">
                             ➕ Cadastrar Primeiro
+                        </button>
+                        <button class="btn btn-test" onclick="addTestBirthday()">
+                            🧪 Adicionar Dados de Teste
                         </button>
                     </div>
                 `;
@@ -1004,32 +1367,43 @@
             }
 
             const sortedBirthdays = [...CONFIG.birthdays].sort((a, b) => {
-                const daysA = calculateDaysUntilBirthday(a.date);
-                const daysB = calculateDaysUntilBirthday(b.date);
+                const daysA = calculateDaysUntilNotification(a.date);
+                const daysB = calculateDaysUntilNotification(b.date);
                 return (typeof daysA === 'number' ? daysA : 999) - (typeof daysB === 'number' ? daysB : 999);
             });
 
             const birthdaysHTML = sortedBirthdays.map(birthday => {
-                const daysUntil = calculateDaysUntilBirthday(birthday.date);
+                const daysUntilBirthday = calculateDaysUntilBirthday(birthday.date);
+                const daysUntilNotification = calculateDaysUntilNotification(birthday.date);
                 const formattedDate = formatDate(birthday.date);
                 const age = calculateAge(birthday.date);
-                const urgencyClass = getUrgencyClass(daysUntil);
+                const urgencyClass = getUrgencyClass(daysUntilNotification);
+                const nextAge = age + 1;
                 
                 return `
                     <div class="birthday-item ${urgencyClass} fade-in">
                         <div class="birthday-info">
-                            <h4>${birthday.name}</h4>
+                            <h4>
+                                <span class="graduation-badge">${birthday.graduation}</span>
+                                ${birthday.name}
+                            </h4>
                             <p>📞 ${birthday.phone}</p>
-                            <p>🎂 ${formattedDate} ${age ? `(${age} anos)` : ''}</p>
+                            <p>🎂 ${formattedDate} (${age} anos, fará ${nextAge})</p>
                             <p>👥 ${birthday.relationship}</p>
-                            <p>📅 Cadastrado em ${new Date(birthday.createdAt).toLocaleDateString('pt-BR')}</p>
+                            ${birthday.unit ? `<p>🏢 ${birthday.unit}</p>` : ''}
+                            <p>📅 Cadastrado: ${new Date(birthday.createdAt).toLocaleDateString('pt-BR')}</p>
                         </div>
                         <div class="birthday-actions">
-                            <div class="days-until ${getDaysUntilClass(daysUntil)}">${daysUntil}</div>
-                            <button class="btn btn-whatsapp" onclick="sendIndividualReminder('${birthday.id}')">
-                                📱 Enviar Agora
+                            <div class="days-until ${getDaysUntilClass(daysUntilNotification)}">
+                                ${getNotificationText(daysUntilNotification, daysUntilBirthday)}
+                            </div>
+                            <button class="btn btn-whatsapp" onclick="sendIndividualReminder('${birthday.id}')" title="Enviar lembrete agora">
+                                📱 Enviar
                             </button>
-                            <button class="btn btn-danger" onclick="deleteBirthday('${birthday.id}', '${birthday.name}')">
+                            <button class="btn btn-test" onclick="editBirthday('${birthday.id}')" title="Editar">
+                                ✏️ Editar
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteBirthday('${birthday.id}', '${birthday.name}')" title="Excluir">
                                 🗑️ Excluir
                             </button>
                         </div>
@@ -1040,25 +1414,59 @@
             container.innerHTML = birthdaysHTML;
         }
 
-        // 🚨 FUNÇÕES DE URGÊNCIA
-        function getUrgencyClass(daysUntil) {
-            if (daysUntil === '🎉 Hoje!') return 'urgent';
-            if (daysUntil === '⚠️ Amanhã!' || daysUntil === 1) return 'tomorrow';
-            return '';
-        }
-
-        function getDaysUntilClass(daysUntil) {
-            if (daysUntil === '🎉 Hoje!') return 'today';
-            if (daysUntil === '⚠️ Amanhã!' || daysUntil === 1) return 'tomorrow';
-            return '';
-        }
-
-        // 📅 CALCULAR DIAS ATÉ ANIVERSÁRIO
-        function calculateDaysUntilBirthday(dateString) {
+        // 🕐 FUNÇÕES DE NOTIFICAÇÃO
+        function calculateDaysUntilNotification(dateString) {
+            const timing = CONFIG.notification.timing;
+            const customValue = CONFIG.notification.customValue;
+            
             const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
             const currentYear = today.getFullYear();
             const birthday = new Date(dateString + 'T00:00:00');
+            birthday.setFullYear(currentYear);
             
+            if (birthday < today) {
+                birthday.setFullYear(currentYear + 1);
+            }
+
+            let notificationDate = new Date(birthday);
+            
+            switch(timing) {
+                case 'same-day':
+                    break;
+                case '1-day':
+                    notificationDate.setDate(notificationDate.getDate() - 1);
+                    break;
+                case '2-days':
+                    notificationDate.setDate(notificationDate.getDate() - 2);
+                    break;
+                case '3-days':
+                    notificationDate.setDate(notificationDate.getDate() - 3);
+                    break;
+                case '1-week':
+                    notificationDate.setDate(notificationDate.getDate() - 7);
+                    break;
+                case 'custom-hours':
+                    notificationDate.setHours(notificationDate.getHours() - customValue);
+                    break;
+                case 'custom-days':
+                    notificationDate.setDate(notificationDate.getDate() - customValue);
+                    break;
+            }
+
+            const timeDiff = notificationDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            return daysDiff;
+        }
+
+        function calculateDaysUntilBirthday(dateString) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const currentYear = today.getFullYear();
+            const birthday = new Date(dateString + 'T00:00:00');
             birthday.setFullYear(currentYear);
             
             if (birthday < today) {
@@ -1068,9 +1476,33 @@
             const timeDiff = birthday.getTime() - today.getTime();
             const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
             
-            if (daysDiff === 0) return '🎉 Hoje!';
-            if (daysDiff === 1) return '⚠️ Amanhã!';
             return daysDiff;
+        }
+
+        function shouldSendNotification(birthday) {
+            const daysUntil = calculateDaysUntilNotification(birthday.date);
+            return daysUntil === 0;
+        }
+
+        function getNotificationText(daysUntilNotification, daysUntilBirthday) {
+            if (daysUntilNotification === 0) {
+                return '🔔 Enviar Hoje!';
+            } else if (daysUntilNotification < 0) {
+                return `🎉 Aniversário em ${daysUntilBirthday} dia${daysUntilBirthday > 1 ? 's' : ''}`;
+            } else {
+                return `📅 Notificar em ${daysUntilNotification} dia${daysUntilNotification > 1 ? 's' : ''}`;
+            }
+        }
+
+        function getUrgencyClass(daysUntil) {
+            if (daysUntil === 0) return 'notification-time';
+            if (daysUntil < 0) return ''; // já passou
+            return '';
+        }
+
+        function getDaysUntilClass(daysUntil) {
+            if (daysUntil === 0) return 'notification-time';
+            return '';
         }
 
         // 🧮 CALCULAR IDADE
@@ -1084,26 +1516,74 @@
                 age--;
             }
             
-            return age > 0 ? age : null;
+            return age > 0 ? age : 0;
         }
 
         // 📅 FORMATAR DATA
         function formatDate(dateString) {
             const date = new Date(dateString + 'T00:00:00');
-            return date.toLocaleDateString('pt-BR');
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
         }
+
+        // ✏️ EDITAR ANIVERSÁRIO
+        window.editBirthday = async function(id) {
+            const birthday = CONFIG.birthdays.find(b => b.id === id);
+            if (!birthday) return;
+
+            const graduation = prompt('Graduação:', birthday.graduation);
+            if (!graduation) return;
+
+            const name = prompt('Nome:', birthday.name);
+            if (!name) return;
+
+            const phone = prompt('Telefone:', birthday.phone);
+            if (!phone) return;
+
+            const date = prompt('Data (YYYY-MM-DD):', birthday.date);
+            if (!date) return;
+
+            const relationship = prompt('Relacionamento:', birthday.relationship);
+            if (!relationship) return;
+
+            const unit = prompt('Unidade/Setor:', birthday.unit || '');
+
+            const updatedData = {
+                ...birthday,
+                graduation: graduation.trim(),
+                name: name.trim(),
+                phone: phone.trim(),
+                date: date.trim(),
+                relationship: relationship.trim(),
+                unit: unit?.trim() || '',
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (!validateBirthdayData(updatedData)) return;
+
+            try {
+                await updateDoc(doc(CONFIG.db, 'birthdays', id), updatedData);
+                showAlert(`✅ ${graduation} ${name} atualizado com sucesso!`, 'success');
+                await loadBirthdays();
+            } catch (error) {
+                showAlert(`❌ Erro ao atualizar: ${error.message}`, 'error');
+            }
+        };
 
         // 🗑️ EXCLUIR ANIVERSÁRIO
         async function deleteBirthday(id, name) {
-            if (!confirm(`🗑️ Excluir aniversário de "${name}"?`)) return;
+            if (!confirm(`🗑️ Excluir aniversário de "${name}"?\n\nEsta ação não pode ser desfeita.`)) return;
 
             try {
                 showAlert('🔄 Excluindo...', 'warning');
                 await deleteDoc(doc(CONFIG.db, 'birthdays', id));
-                showAlert(`✅ "${name}" excluído!`, 'success');
+                showAlert(`✅ "${name}" excluído com sucesso!`, 'success');
                 await loadBirthdays();
             } catch (error) {
-                showAlert(`❌ Erro: ${error.message}`, 'error');
+                showAlert(`❌ Erro ao excluir: ${error.message}`, 'error');
             }
         }
 
@@ -1114,43 +1594,77 @@
             alertDiv.className = `alert alert-${type} fade-in`;
             alertDiv.textContent = message;
             
+            // Adicionar botão de fechar
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = ' ❌';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.float = 'right';
+            closeBtn.onclick = () => alertDiv.remove();
+            alertDiv.appendChild(closeBtn);
+            
             container.innerHTML = '';
             container.appendChild(alertDiv);
             
-            setTimeout(() => alertDiv.remove(), 5000);
+            // Auto-remover
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 7000);
         }
 
         // 💬 CRIAR MENSAGEM WHATSAPP
         function createWhatsAppMessage(birthday) {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const age = calculateAge(birthday.date);
+            const birthdayDate = new Date(birthday.date + 'T00:00:00');
+            const currentYear = new Date().getFullYear();
+            birthdayDate.setFullYear(currentYear);
             
-            return `🎉 *LEMBRETE DE ANIVERSÁRIO* 🎂
+            if (birthdayDate < new Date()) {
+                birthdayDate.setFullYear(currentYear + 1);
+            }
+            
+            const age = calculateAge(birthday.date);
+            const nextAge = age + 1;
+            
+            const timing = CONFIG.notification.timing;
+            let whenText = '';
+            
+            switch(timing) {
+                case 'same-day':
+                    whenText = 'HOJE';
+                    break;
+                case '1-day':
+                    whenText = 'AMANHÃ';
+                    break;
+                default:
+                    whenText = `em ${calculateDaysUntilBirthday(birthday.date)} dia(s)`;
+            }
+            
+            return `🎉 *LEMBRETE DE ANIVERSÁRIO PM* 🎂
 
-📅 *Data:* ${tomorrow.toLocaleDateString('pt-BR')} (AMANHÃ!)
+📅 *Data:* ${birthdayDate.toLocaleDateString('pt-BR')} (${whenText.toUpperCase()}!)
+🎖️ *Graduação:* ${birthday.graduation}
 👤 *Nome:* ${birthday.name}
-🎈 *Idade:* ${age} anos
+🎈 *Idade:* ${nextAge} anos
 📞 *Telefone:* ${birthday.phone}
 👥 *Relacionamento:* ${birthday.relationship}
+${birthday.unit ? `🏢 *Unidade:* ${birthday.unit}` : ''}
 
-🎁 *Não esqueça de parabenizar!*
+🎁 *Não esqueça de parabenizar nosso companheiro da PM!*
+💐 *Sugestões:* Ligação, mensagem, presente ou visita
 
-_Sistema de Aniversários_ ⚡
+---
+_Sistema de Aniversários PM_ 🎖️
 _${new Date().toLocaleString('pt-BR')}_`;
         }
 
-        // 📱 ENVIAR MENSAGEM VIA TWILIO (REAL)
+        // 📱 ENVIAR MENSAGEM VIA TWILIO
         async function sendWhatsAppMessage(to, message) {
-            if (!CONFIG.twilio.authToken) {
-                throw new Error('Auth Token não configurado. Configure suas credenciais primeiro.');
-            }
-
             const url = `https://api.twilio.com/2010-04-01/Accounts/${CONFIG.twilio.accountSid}/Messages.json`;
             
             const body = new URLSearchParams({
                 From: CONFIG.twilio.fromNumber,
-                To: to || CONFIG.twilio.toNumber,
+                To: to.startsWith('whatsapp:') ? to : `whatsapp:${to}`,
                 Body: message
             });
 
@@ -1171,17 +1685,11 @@ _${new Date().toLocaleString('pt-BR')}_`;
             return await response.json();
         }
 
-        // 🧪 FUNÇÕES DE TESTE DO TWILIO
-        window.testTwilioConnection = async function() {
-            if (!CONFIG.twilio.authToken) {
-                showAlert('❌ Configure o Auth Token primeiro!', 'error');
-                return;
-            }
-
-            showTestResults('🧪 TESTANDO CONEXÃO TWILIO...\n\n');
+        // 🧪 FUNÇÕES DE TESTE
+        window.testWhatsAppConnection = async function() {
+            showTestResults('🧪 TESTANDO CONEXÃO WHATSAPP...\n\n');
             
             try {
-                // Teste básico da API Twilio
                 const url = `https://api.twilio.com/2010-04-01/Accounts/${CONFIG.twilio.accountSid}.json`;
                 
                 const response = await fetch(url, {
@@ -1192,108 +1700,207 @@ _${new Date().toLocaleString('pt-BR')}_`;
 
                 if (response.ok) {
                     const data = await response.json();
-                    const result = `✅ CONEXÃO TWILIO SUCESSO!
+                    updateConnectionStatus(true);
+                    
+                    const result = `✅ CONEXÃO WHATSAPP SUCESSO!
 
 🆔 Account SID: ${CONFIG.twilio.accountSid}
 📊 Status: ${data.status}
 📤 From: ${CONFIG.twilio.fromNumber}  
 📥 To: ${CONFIG.twilio.toNumber}
+⏰ Configuração: ${CONFIG.notification.timing}
+🕐 Horário: ${CONFIG.notification.sendTime}
 
-🔧 API funcionando corretamente!
-⚡ Pronto para enviar mensagens WhatsApp!`;
+🔧 Sistema funcionando corretamente!
+⚡ Pronto para envios automáticos da PM!`;
                     
                     showTestResults(result);
-                    showAlert('✅ Twilio conectado e funcionando!', 'success');
+                    showAlert('✅ WhatsApp conectado e funcionando!', 'success');
                 } else {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
             } catch (error) {
-                const errorResult = `❌ ERRO NA CONEXÃO TWILIO
+                updateConnectionStatus(false);
+                const errorResult = `❌ ERRO NA CONEXÃO WHATSAPP
 
 ⚠️ Erro: ${error.message}
 
-🔧 Verifique:
-- Account SID correto
-- Auth Token válido
-- Conexão com internet
+🔧 Verificações:
+- Conexão com internet: ${navigator.onLine ? 'OK' : 'FALHA'}
+- Sistema: Polícia Militar
+- Configuração: ${CONFIG.notification.timing}
 
-💡 Configure suas credenciais corretas no painel acima.`;
+💡 O sistema está configurado internamente.
+Entre em contato com o suporte se o problema persistir.`;
                 
                 showTestResults(errorResult);
-                showAlert(`❌ Erro Twilio: ${error.message}`, 'error');
+                showAlert(`❌ Erro: ${error.message}`, 'error');
             }
         };
 
         window.sendTestMessage = async function() {
-            if (!CONFIG.twilio.authToken) {
-                showAlert('❌ Configure o Auth Token primeiro!', 'error');
-                return;
-            }
-
             showAlert('📱 Enviando mensagem de teste...', 'warning');
-            showTestResults('📱 ENVIANDO TESTE WHATSAPP...\n\n');
+            showTestResults('📱 ENVIANDO TESTE WHATSAPP PM...\n\n');
             
-            const testMessage = `🧪 *TESTE DO SISTEMA* 🎂
+            const testMessage = `🧪 *TESTE DO SISTEMA PM* 🎖️
 
 ⏰ *Horário:* ${new Date().toLocaleString('pt-BR')}
 🤖 *Sistema:* Funcionando perfeitamente!
 📱 *WhatsApp:* Conectado via Twilio
+🎯 *Versão:* Sistema PM v1.0
+📊 *Aniversários:* ${CONFIG.birthdays.length} cadastrados
+⚙️ *Configuração:* ${CONFIG.notification.timing}
 
-✅ *Seu sistema está pronto para enviar lembretes automáticos!*
+✅ *Sistema pronto para lembretes automáticos da PM!*
 
-_Teste realizado com sucesso_ ⚡`;
+---
+_Teste realizado com sucesso_ 🎖️`;
 
             try {
                 const result = await sendWhatsAppMessage(CONFIG.twilio.toNumber, testMessage);
                 
-                const successResult = `✅ MENSAGEM ENVIADA COM SUCESSO!
+                const successResult = `✅ MENSAGEM TESTE ENVIADA!
 
 📱 Para: ${CONFIG.twilio.toNumber}
 📤 De: ${CONFIG.twilio.fromNumber}
 🆔 SID: ${result.sid}
 📊 Status: ${result.status}
-💰 Preço: ${result.price || 'N/A'} ${result.price_unit || ''}
+⏰ Enviado: ${new Date().toLocaleString('pt-BR')}
+💰 Custo: ${result.price || 'Grátis'} ${result.price_unit || ''}
 
 💬 Mensagem:
 ${testMessage}
 
-⚡ Sistema WhatsApp funcionando 100%!`;
+⚡ Sistema PM funcionando 100%!`;
                 
                 showTestResults(successResult);
                 showAlert('✅ Teste enviado! Verifique seu WhatsApp', 'success');
+                updateConnectionStatus(true);
                 
             } catch (error) {
-                const errorResult = `❌ ERRO AO ENVIAR MENSAGEM
+                updateConnectionStatus(false);
+                const errorResult = `❌ ERRO NO ENVIO
 
 ⚠️ Erro: ${error.message}
+📞 Para: ${CONFIG.twilio.toNumber}
+⏰ Tentativa: ${new Date().toLocaleString('pt-BR')}
 
-🔧 Possíveis causas:
-- Auth Token inválido
-- Número de destino não verificado
-- Conta Twilio sem créditos
-- Sandbox WhatsApp não configurado
-
-💡 Verifique sua conta Twilio e configurações.`;
+💡 Sistema está configurado internamente.
+Contate o suporte se necessário.`;
                 
                 showTestResults(errorResult);
                 showAlert(`❌ Erro no envio: ${error.message}`, 'error');
             }
         };
 
+        window.sendImmediateTest = async function() {
+            // Buscar aniversário do Sd PM Uilton ou aniversários de amanhã
+            const tomorrowBirthdays = CONFIG.birthdays.filter(birthday => {
+                const days = calculateDaysUntilBirthday(birthday.date);
+                return days === 1 || days === '⚠️ Amanhã!';
+            });
+
+            if (tomorrowBirthdays.length === 0) {
+                showAlert('❌ Nenhum aniversário amanhã para testar!', 'error');
+                return;
+            }
+
+            // Pegar o primeiro aniversário de amanhã (provavelmente o Sd PM Uilton)
+            const birthday = tomorrowBirthdays[0];
+            const currentTime = new Date().toLocaleTimeString('pt-BR');
+            
+            if (!confirm(`🚀 TESTE IMEDIATO - ${currentTime}
+
+Enviar lembrete AGORA para:
+${birthday.graduation} ${birthday.name}
+Aniversário: AMANHÃ (${calculateAge(birthday.date) + 1} anos)
+
+Confirma o envio?`)) {
+                return;
+            }
+
+            showAlert(`🚀 ENVIANDO TESTE IMEDIATO para ${birthday.graduation} ${birthday.name}...`, 'warning');
+            showTestResults(`🚀 TESTE IMEDIATO - ${currentTime}\n\n`);
+            
+            try {
+                // Criar mensagem personalizada para o teste
+                const testMessage = `🎉 *LEMBRETE DE ANIVERSÁRIO PM* 🎂
+🚀 *TESTE IMEDIATO - ${currentTime}*
+
+📅 *Data:* AMANHÃ (${new Date(Date.now() + 86400000).toLocaleDateString('pt-BR')})!
+🎖️ *Graduação:* ${birthday.graduation}
+👤 *Nome:* ${birthday.name}
+🎈 *Idade:* ${calculateAge(birthday.date) + 1} anos
+📞 *Telefone:* ${birthday.phone}
+👥 *Relacionamento:* ${birthday.relationship}
+${birthday.unit ? `🏢 *Unidade:* ${birthday.unit}` : ''}
+
+🎁 *Não esqueça de parabenizar nosso companheiro da PM AMANHÃ!*
+💐 *Sugestões:* Ligação, mensagem, presente ou visita
+
+---
+_Teste Imediato do Sistema PM_ 🎖️
+_${new Date().toLocaleString('pt-BR')}_`;
+
+                const result = await sendWhatsAppMessage(CONFIG.twilio.toNumber, testMessage);
+                
+                const successResult = `🚀 TESTE IMEDIATO ENVIADO COM SUCESSO!
+
+⏰ Horário do teste: ${currentTime}
+🎖️ Para: ${birthday.graduation} ${birthday.name}
+📱 Destinatário: ${CONFIG.twilio.toNumber}
+📤 De: ${CONFIG.twilio.fromNumber}
+🆔 SID: ${result.sid}
+📊 Status: ${result.status}
+💰 Custo: ${result.price || 'Grátis'} ${result.price_unit || ''}
+
+💬 Mensagem enviada:
+${testMessage}
+
+✅ TESTE REALIZADO COM SUCESSO!
+📱 Verifique seu WhatsApp agora!`;
+                
+                showTestResults(successResult);
+                showAlert(`🚀 TESTE IMEDIATO enviado! Verifique seu WhatsApp`, 'success');
+                updateConnectionStatus(true);
+                
+            } catch (error) {
+                updateConnectionStatus(false);
+                const errorResult = `❌ ERRO NO TESTE IMEDIATO
+
+🎖️ ${birthday.graduation} ${birthday.name}
+📞 Para: ${CONFIG.twilio.toNumber}
+⚠️ Erro: ${error.message}
+⏰ Tentativa: ${new Date().toLocaleString('pt-BR')}
+
+💡 Verifique as configurações do sistema.`;
+                
+                showTestResults(errorResult);
+                showAlert(`❌ Erro no teste: ${error.message}`, 'error');
+            }
+        };
+
         window.showWhatsAppPreview = function() {
             const preview = document.getElementById('whatsapp-preview');
             
-            const exampleBirthday = {
-                name: 'João Silva',
-                phone: '+5571987654321',
-                date: (() => {
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    tomorrow.setFullYear(tomorrow.getFullYear() - 25);
-                    return tomorrow.toISOString().split('T')[0];
-                })(),
-                relationship: 'Amigo'
-            };
+            let exampleBirthday;
+            
+            if (CONFIG.birthdays.length > 0) {
+                exampleBirthday = CONFIG.birthdays[0];
+            } else {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setFullYear(tomorrow.getFullYear() - 30);
+                
+                exampleBirthday = {
+                    graduation: 'Cap PM',
+                    name: 'João Silva',
+                    phone: '+5571987654321',
+                    date: tomorrow.toISOString().split('T')[0],
+                    relationship: 'Colega de Trabalho',
+                    unit: '1º BPM'
+                };
+            }
 
             const message = createWhatsAppMessage(exampleBirthday);
             
@@ -1302,85 +1909,98 @@ ${testMessage}
 
             setTimeout(() => {
                 preview.style.display = 'none';
-            }, 10000);
+            }, 15000);
         };
 
-        window.checkTomorrowBirthdays = function() {
-            const tomorrowBirthdays = CONFIG.birthdays.filter(birthday => {
-                const days = calculateDaysUntilBirthday(birthday.date);
-                return days === '⚠️ Amanhã!' || days === 1;
+        window.checkNotificationQueue = function() {
+            const queueBirthdays = CONFIG.birthdays.filter(birthday => {
+                return shouldSendNotification(birthday);
             });
 
-            if (tomorrowBirthdays.length > 0) {
-                const names = tomorrowBirthdays.map(b => b.name).join(', ');
-                showAlert(`🎂 ${tomorrowBirthdays.length} aniversário(s) amanhã: ${names}`, 'success');
+            if (queueBirthdays.length > 0) {
+                const names = queueBirthdays.map(b => `${b.graduation} ${b.name}`).join(', ');
+                showAlert(`📋 ${queueBirthdays.length} na fila de envio: ${names}`, 'success');
                 
-                const result = `🔍 VERIFICAÇÃO DE AMANHÃ
+                const result = `📋 FILA DE NOTIFICAÇÕES
 
-📅 Data verificada: ${new Date(Date.now() + 86400000).toLocaleDateString('pt-BR')}
-🎂 Aniversários encontrados: ${tomorrowBirthdays.length}
+📅 Data de verificação: ${new Date().toLocaleDateString('pt-BR')}
+⏰ Horário configurado: ${CONFIG.notification.sendTime}
+🔔 Configuração: ${CONFIG.notification.timing}
+📱 Para: ${CONFIG.twilio.toNumber}
 
-${tomorrowBirthdays.map((b, i) => 
-`${i + 1}. ${b.name} - ${calculateAge(b.date)} anos - ${b.relationship}`
-).join('\n')}
+👥 PESSOAS NA FILA (${queueBirthdays.length}):
+${queueBirthdays.map((b, i) => {
+    const nextAge = calculateAge(b.date) + 1;
+    const birthdayDays = calculateDaysUntilBirthday(b.date);
+    return `${i + 1}. ${b.graduation} ${b.name}
+   🎂 ${nextAge} anos em ${birthdayDays} dia(s)
+   👥 ${b.relationship}
+   ${b.unit ? `🏢 ${b.unit}` : ''}
+   📞 ${b.phone}`;
+}).join('\n\n')}
 
-📱 Mensagens seriam enviadas para: ${CONFIG.twilio.toNumber}
 ✅ Sistema pronto para execução automática!`;
                 
                 showTestResults(result);
             } else {
-                showAlert('📅 Nenhum aniversário amanhã', 'warning');
-                showTestResults(`🔍 VERIFICAÇÃO DE AMANHÃ
+                showAlert('📋 Nenhuma notificação na fila hoje', 'warning');
+                showTestResults(`📋 FILA DE NOTIFICAÇÕES
 
-📅 Data verificada: ${new Date(Date.now() + 86400000).toLocaleDateString('pt-BR')}
-🎂 Aniversários encontrados: 0
+📅 Data: ${new Date().toLocaleDateString('pt-BR')}
+⏰ Horário: ${CONFIG.notification.sendTime}
+🔔 Configuração: ${CONFIG.notification.timing}
 
-ℹ️ Nenhuma mensagem será enviada amanhã.
-✅ Sistema funcionando normalmente.`);
+ℹ️ Nenhuma notificação para envio hoje.
+📊 Total no sistema: ${CONFIG.birthdays.length}
+
+📅 Próximas notificações:
+${CONFIG.birthdays.slice(0, 3).map(b => {
+    const days = calculateDaysUntilNotification(b.date);
+    return `- ${b.graduation} ${b.name}: ${days >= 0 ? `${days} dia(s)` : 'Já passou'}`;
+}).join('\n') || 'Nenhuma cadastrada'}`);
             }
         };
 
         window.simulateAutomaticCheck = async function() {
-            if (!CONFIG.twilio.authToken) {
-                showAlert('❌ Configure o Auth Token para simulação real!', 'error');
-                return;
-            }
-
-            showAlert('🤖 Executando verificação automática...', 'warning');
-            showTestResults('🤖 EXECUÇÃO AUTOMÁTICA EM ANDAMENTO\n\n');
+            showAlert('🤖 Executando verificação automática completa...', 'warning');
+            showTestResults('🤖 EXECUÇÃO AUTOMÁTICA PM EM ANDAMENTO\n\n');
             
-            const tomorrowBirthdays = CONFIG.birthdays.filter(birthday => {
-                const days = calculateDaysUntilBirthday(birthday.date);
-                return days === '⚠️ Amanhã!' || days === 1;
+            const queueBirthdays = CONFIG.birthdays.filter(birthday => {
+                return shouldSendNotification(birthday);
             });
 
-            let result = `🎂 === EXECUÇÃO AUTOMÁTICA DIÁRIA ===
+            let result = `🎖️ === EXECUÇÃO AUTOMÁTICA PM ===
 ⏰ Horário: ${new Date().toLocaleString('pt-BR')}
 📅 Data: ${new Date().toLocaleDateString('pt-BR')}
+🎯 Sistema: Polícia Militar
 
 🔍 VERIFICANDO ANIVERSÁRIOS...
 📋 Total no banco: ${CONFIG.birthdays.length}
-🎂 Amanhã: ${tomorrowBirthdays.length}\n\n`;
+🔔 Na fila hoje: ${queueBirthdays.length}
+⚙️ Configuração: ${CONFIG.notification.timing}
+📱 Para: ${CONFIG.twilio.toNumber}\n\n`;
 
-            if (tomorrowBirthdays.length > 0) {
+            if (queueBirthdays.length > 0) {
                 result += '📱 ENVIANDO WHATSAPP...\n';
                 
                 let successCount = 0;
                 let errorCount = 0;
 
-                for (let i = 0; i < tomorrowBirthdays.length; i++) {
-                    const birthday = tomorrowBirthdays[i];
-                    result += `\n   ${i + 1}. Para: ${CONFIG.twilio.toNumber}\n   Nome: ${birthday.name} (${calculateAge(birthday.date)} anos)\n`;
+                for (let i = 0; i < queueBirthdays.length; i++) {
+                    const birthday = queueBirthdays[i];
+                    const nextAge = calculateAge(birthday.date) + 1;
+                    result += `\n   ${i + 1}. Para: ${CONFIG.twilio.toNumber}\n   ${birthday.graduation} ${birthday.name} (${nextAge} anos)\n   ${birthday.relationship}${birthday.unit ? ` - ${birthday.unit}` : ''}\n`;
                     
                     try {
                         const message = createWhatsAppMessage(birthday);
                         const twilioResult = await sendWhatsAppMessage(CONFIG.twilio.toNumber, message);
-                        result += `   Status: ✅ Enviado (SID: ${twilioResult.sid})\n`;
+                        result += `   Status: ✅ Enviado com sucesso\n   SID: ${twilioResult.sid}\n`;
                         successCount++;
                         
-                        // Aguardar 2 segundos entre envios para evitar rate limit
-                        if (i < tomorrowBirthdays.length - 1) {
+                        // Aguardar entre envios
+                        if (i < queueBirthdays.length - 1) {
                             await new Promise(resolve => setTimeout(resolve, 2000));
+                            result += '   ⏳ Aguardando 2s...\n';
                         }
                     } catch (error) {
                         result += `   Status: ❌ Erro - ${error.message}\n`;
@@ -1390,21 +2010,32 @@ ${tomorrowBirthdays.map((b, i) =>
                     showTestResults(result);
                 }
 
-                result += `\n📊 RELATÓRIO FINAL:
+                result += `\n📊 RELATÓRIO FINAL PM:
 ✅ Sucessos: ${successCount}
 ❌ Erros: ${errorCount}
-📈 Taxa: ${((successCount / tomorrowBirthdays.length) * 100).toFixed(1)}%`;
+📈 Taxa de sucesso: ${((successCount / queueBirthdays.length) * 100).toFixed(1)}%
+⏱️ Tempo total: ${(queueBirthdays.length * 2).toFixed(1)}s`;
 
-                showAlert(`🤖 Execução concluída! ${successCount}/${tomorrowBirthdays.length} mensagens enviadas`, successCount > 0 ? 'success' : 'error');
+                const alertType = successCount > 0 ? 'success' : 'error';
+                showAlert(`🤖 Execução PM concluída! ${successCount}/${queueBirthdays.length} mensagens enviadas`, alertType);
             } else {
                 result += `ℹ️ NENHUMA MENSAGEM ENVIADA
-Motivo: Não há aniversários amanhã
-Status: ✅ Sistema funcionando`;
+Motivo: Não há notificações na fila hoje
+Status: ✅ Sistema funcionando
+Próxima verificação: Amanhã às ${CONFIG.notification.sendTime}
+
+📊 Estatísticas PM:
+- Total de policiais: ${CONFIG.birthdays.length}
+- Este mês: ${CONFIG.birthdays.filter(b => new Date(b.date).getMonth() === new Date().getMonth()).length}
+- Próximos 7 dias: ${CONFIG.birthdays.filter(b => {
+    const days = calculateDaysUntilBirthday(b.date);
+    return typeof days === 'number' && days <= 7;
+}).length}`;
                 
-                showAlert('🤖 Execução concluída! Nenhuma mensagem para enviar', 'success');
+                showAlert('🤖 Execução PM concluída! Nenhuma mensagem para enviar hoje', 'success');
             }
 
-            result += '\n\n🎉 EXECUÇÃO CONCLUÍDA!';
+            result += '\n\n🎉 EXECUÇÃO AUTOMÁTICA PM CONCLUÍDA!';
             showTestResults(result);
         };
 
@@ -1412,45 +2043,48 @@ Status: ✅ Sistema funcionando`;
             const birthday = CONFIG.birthdays.find(b => b.id === birthdayId);
             if (!birthday) return;
 
-            if (!CONFIG.twilio.authToken) {
-                showAlert('❌ Configure o Auth Token primeiro!', 'error');
-                return;
-            }
-
-            showAlert(`📱 Enviando lembrete para ${birthday.name}...`, 'warning');
+            const nextAge = calculateAge(birthday.date) + 1;
+            showAlert(`📱 Enviando lembrete para ${birthday.graduation} ${birthday.name}...`, 'warning');
             
             try {
                 const message = createWhatsAppMessage(birthday);
                 const result = await sendWhatsAppMessage(CONFIG.twilio.toNumber, message);
                 
-                showAlert(`✅ Lembrete enviado para ${birthday.name}!`, 'success');
+                showAlert(`✅ Lembrete enviado para ${birthday.graduation} ${birthday.name}!`, 'success');
                 
                 const resultText = `📱 LEMBRETE INDIVIDUAL ENVIADO
 
+🎖️ Graduação: ${birthday.graduation}
 👤 Nome: ${birthday.name}
+🎂 Idade: ${nextAge} anos
+👥 Relacionamento: ${birthday.relationship}
+${birthday.unit ? `🏢 Unidade: ${birthday.unit}` : ''}
 📞 Para: ${CONFIG.twilio.toNumber}
 🆔 SID: ${result.sid}
 📊 Status: ${result.status}
 ⏰ Enviado: ${new Date().toLocaleString('pt-BR')}
-💰 Custo: ${result.price || 'N/A'} ${result.price_unit || ''}
 
-💬 Mensagem:
-${message}`;
+💬 Mensagem enviada:
+${message}
+
+✅ Entrega confirmada!`;
                 
                 showTestResults(resultText);
+                updateConnectionStatus(true);
             } catch (error) {
                 showAlert(`❌ Erro ao enviar: ${error.message}`, 'error');
                 
                 const errorText = `❌ ERRO NO ENVIO INDIVIDUAL
 
-👤 Nome: ${birthday.name}
+🎖️ ${birthday.graduation} ${birthday.name}
 📞 Para: ${CONFIG.twilio.toNumber}
 ⚠️ Erro: ${error.message}
 ⏰ Tentativa: ${new Date().toLocaleString('pt-BR')}
 
-🔧 Verifique suas configurações Twilio.`;
+💡 Sistema está configurado internamente.`;
                 
                 showTestResults(errorText);
+                updateConnectionStatus(false);
             }
         };
 
@@ -1465,82 +2099,297 @@ ${message}`;
 
         // 🔧 FUNÇÕES UTILITÁRIAS
         window.clearForm = function() {
-            document.getElementById('birthday-form').reset();
+            const form = document.getElementById('birthday-form');
+            form.reset();
+            form.classList.add('success-animation');
+            setTimeout(() => form.classList.remove('success-animation'), 500);
             showAlert('🧹 Formulário limpo!', 'success');
+            document.getElementById('graduation').focus();
         };
 
         window.addTestBirthday = function() {
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setFullYear(tomorrow.getFullYear() - 30);
             
-            document.getElementById('name').value = 'Teste Sistema';
-            document.getElementById('phone').value = '+5571999999999';
+            const testData = [
+                { graduation: 'Cap PM', name: 'Maria Silva', relationship: 'Comando', unit: '1º BPM' },
+                { graduation: 'Sgt PM', name: 'João Santos', relationship: 'Colega de Trabalho', unit: 'COPOM' },
+                { graduation: 'Sd PM', name: 'Ana Costa', relationship: 'Subordinado', unit: '2º BPM' }
+            ];
+            
+            const randomData = testData[Math.floor(Math.random() * testData.length)];
+            const randomPhone = '+5571' + Math.floor(Math.random() * 90000000 + 10000000);
+            
+            document.getElementById('graduation').value = randomData.graduation;
+            document.getElementById('name').value = randomData.name;
+            document.getElementById('phone').value = randomPhone;
             document.getElementById('date').value = tomorrow.toISOString().split('T')[0];
-            document.getElementById('relationship').value = 'Teste';
+            document.getElementById('relationship').value = randomData.relationship;
+            document.getElementById('unit').value = randomData.unit;
             
-            showAlert('🧪 Dados de teste preenchidos!', 'success');
+            showAlert(`🧪 Dados de teste preenchidos: ${randomData.graduation} ${randomData.name}`, 'success');
         };
 
         window.exportBirthdays = function() {
+            if (CONFIG.birthdays.length === 0) {
+                showAlert('❌ Nenhum aniversário para exportar', 'error');
+                return;
+            }
+
             const data = CONFIG.birthdays.map(b => ({
+                Graduação: b.graduation,
                 Nome: b.name,
                 Telefone: b.phone,
                 'Data Nascimento': b.date,
+                'Idade Atual': calculateAge(b.date),
+                'Próxima Idade': calculateAge(b.date) + 1,
                 Relacionamento: b.relationship,
-                Idade: calculateAge(b.date) || 0
+                'Unidade/Setor': b.unit || '',
+                'Dias até Notificação': (() => {
+                    const days = calculateDaysUntilNotification(b.date);
+                    return typeof days === 'number' ? days : days;
+                })(),
+                'Data Cadastro': new Date(b.createdAt).toLocaleDateString('pt-BR')
             }));
 
             const csv = convertToCSV(data);
-            downloadCSV(csv, 'aniversarios.csv');
-            showAlert('📤 Aniversários exportados!', 'success');
+            const filename = `aniversarios_pm_${new Date().toISOString().split('T')[0]}.csv`;
+            downloadCSV(csv, filename);
+            
+            showAlert(`📤 ${CONFIG.birthdays.length} aniversários PM exportados!`, 'success');
+        };
+
+        window.importBirthdays = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    let importedData = [];
+
+                    if (file.name.endsWith('.csv')) {
+                        importedData = parseCSV(text);
+                    } else if (file.name.endsWith('.json')) {
+                        importedData = JSON.parse(text);
+                    }
+
+                    if (importedData.length > 0) {
+                        let successCount = 0;
+                        for (const item of importedData) {
+                            try {
+                                await addDoc(collection(CONFIG.db, 'birthdays'), {
+                                    ...item,
+                                    createdAt: new Date().toISOString(),
+                                    createdBy: 'import',
+                                    imported: true
+                                });
+                                successCount++;
+                            } catch (error) {
+                                console.error('Erro ao importar item:', error);
+                            }
+                        }
+                        
+                        showAlert(`✅ ${successCount}/${importedData.length} aniversários importados!`, 'success');
+                        await loadBirthdays();
+                    }
+                } catch (error) {
+                    showAlert(`❌ Erro ao importar: ${error.message}`, 'error');
+                }
+            };
+            input.click();
         };
 
         window.showUpcoming = function() {
+            const days = parseInt(prompt('Mostrar próximos quantos dias?', '30')) || 30;
+            
             const upcoming = CONFIG.birthdays
                 .map(birthday => ({
                     ...birthday,
                     daysUntil: calculateDaysUntilBirthday(birthday.date)
                 }))
-                .filter(b => typeof b.daysUntil === 'number' && b.daysUntil <= 30)
+                .filter(b => typeof b.daysUntil === 'number' && b.daysUntil <= days)
                 .sort((a, b) => a.daysUntil - b.daysUntil);
 
             if (upcoming.length > 0) {
-                const list = upcoming.map(b => `${b.name} (${b.daysUntil} dias)`).join(', ');
-                showAlert(`📅 Próximos 30 dias: ${list}`, 'success');
+                const list = upcoming.map(b => {
+                    const nextAge = calculateAge(b.date) + 1;
+                    return `${b.graduation} ${b.name} (${b.daysUntil} dias, ${nextAge} anos)`;
+                }).join('\n• ');
+                
+                showAlert(`📅 Próximos ${days} dias (${upcoming.length}):\n• ${list}`, 'success');
             } else {
-                showAlert('📅 Nenhum aniversário nos próximos 30 dias', 'warning');
+                showAlert(`📅 Nenhum aniversário nos próximos ${days} dias`, 'warning');
             }
         };
 
+        window.filterBirthdays = function() {
+            const filter = prompt('Filtrar por:\n• Nome\n• Graduação\n• Relacionamento\n• Unidade\n\nDigite sua busca:');
+            if (!filter) return;
+
+            const filtered = CONFIG.birthdays.filter(b => 
+                b.name.toLowerCase().includes(filter.toLowerCase()) ||
+                b.graduation.toLowerCase().includes(filter.toLowerCase()) ||
+                b.relationship.toLowerCase().includes(filter.toLowerCase()) ||
+                (b.unit && b.unit.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            if (filtered.length > 0) {
+                const list = filtered.map(b => `${b.graduation} ${b.name} - ${b.relationship}${b.unit ? ` - ${b.unit}` : ''}`).join('\n');
+                showAlert(`🔍 ${filtered.length} resultado(s) para "${filter}":\n${list}`, 'success');
+            } else {
+                showAlert(`🔍 Nenhum resultado encontrado para "${filter}"`, 'warning');
+            }
+        };
+
+        window.showStatistics = function() {
+            const stats = {
+                total: CONFIG.birthdays.length,
+                byGraduation: {},
+                byRelationship: {},
+                byUnit: {},
+                byMonth: {},
+                ageGroups: { '20-30': 0, '31-40': 0, '41-50': 0, '51-60': 0, '60+': 0 },
+                avgAge: 0
+            };
+
+            CONFIG.birthdays.forEach(b => {
+                // Por graduação
+                stats.byGraduation[b.graduation] = (stats.byGraduation[b.graduation] || 0) + 1;
+                
+                // Por relacionamento
+                stats.byRelationship[b.relationship] = (stats.byRelationship[b.relationship] || 0) + 1;
+                
+                // Por unidade
+                if (b.unit) {
+                    stats.byUnit[b.unit] = (stats.byUnit[b.unit] || 0) + 1;
+                }
+                
+                // Por mês
+                const month = new Date(b.date).toLocaleDateString('pt-BR', { month: 'long' });
+                stats.byMonth[month] = (stats.byMonth[month] || 0) + 1;
+                
+                // Por idade
+                const age = calculateAge(b.date);
+                if (age <= 30) stats.ageGroups['20-30']++;
+                else if (age <= 40) stats.ageGroups['31-40']++;
+                else if (age <= 50) stats.ageGroups['41-50']++;
+                else if (age <= 60) stats.ageGroups['51-60']++;
+                else stats.ageGroups['60+']++;
+                
+                stats.avgAge += age;
+            });
+
+            stats.avgAge = stats.total > 0 ? (stats.avgAge / stats.total).toFixed(1) : 0;
+
+            const report = `📊 RELATÓRIO ESTATÍSTICO PM
+
+🎖️ GERAL:
+• Total de policiais: ${stats.total}
+• Idade média: ${stats.avgAge} anos
+• Configuração: ${CONFIG.notification.timing}
+• Data do relatório: ${new Date().toLocaleString('pt-BR')}
+
+🎖️ POR GRADUAÇÃO:
+${Object.entries(stats.byGraduation).map(([grad, count]) => 
+    `• ${grad}: ${count} (${((count/stats.total)*100).toFixed(1)}%)`
+).join('\n')}
+
+👥 POR RELACIONAMENTO:
+${Object.entries(stats.byRelationship).map(([rel, count]) => 
+    `• ${rel}: ${count} (${((count/stats.total)*100).toFixed(1)}%)`
+).join('\n')}
+
+🏢 POR UNIDADE (top 5):
+${Object.entries(stats.byUnit).sort((a,b) => b[1] - a[1]).slice(0,5).map(([unit, count]) => 
+    `• ${unit}: ${count} policial${count > 1 ? 'is' : ''}`
+).join('\n')}
+
+📅 POR MÊS:
+${Object.entries(stats.byMonth).map(([month, count]) => 
+    `• ${month}: ${count} aniversário${count > 1 ? 's' : ''}`
+).join('\n')}
+
+🎂 POR FAIXA ETÁRIA:
+• 20-30 anos: ${stats.ageGroups['20-30']}
+• 31-40 anos: ${stats.ageGroups['31-40']}
+• 41-50 anos: ${stats.ageGroups['41-50']}
+• 51-60 anos: ${stats.ageGroups['51-60']}
+• 60+ anos: ${stats.ageGroups['60+']}
+
+🎯 PRÓXIMOS EVENTOS:
+• Na fila hoje: ${CONFIG.birthdays.filter(b => shouldSendNotification(b)).length}
+• Esta semana: ${CONFIG.birthdays.filter(b => {
+    const days = calculateDaysUntilBirthday(b.date);
+    return typeof days === 'number' && days <= 7;
+}).length}
+
+⚡ Sistema PM funcionando perfeitamente!`;
+
+            showTestResults(report);
+            showAlert('📊 Relatório estatístico PM gerado!', 'success');
+        };
+
         function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
             const headers = Object.keys(data[0]);
-            const csv = [
+            const csvContent = [
                 headers.join(','),
-                ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+                ...data.map(row => 
+                    headers.map(header => {
+                        const value = row[header];
+                        return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
+                    }).join(',')
+                )
             ].join('\n');
-            return csv;
+            
+            return '\ufeff' + csvContent; // BOM para UTF-8
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = values[index] || '';
+                });
+                return obj;
+            });
         }
 
         function downloadCSV(csv, filename) {
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }
 
         // ⚡ EXPORTAR FUNÇÕES GLOBAIS
         window.loadBirthdays = loadBirthdays;
         window.deleteBirthday = deleteBirthday;
-        window.saveCredentials = saveCredentials;
 
         // 🚀 INICIAR SISTEMA
-        document.addEventListener('DOMContentLoaded', initializeSystem);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎖️ Sistema de Aniversários PM - Inicializando...');
+            initializeSystem();
+        });
 
-        console.log('🎂 Sistema completo carregado!');
-        console.log('📱 Configure suas credenciais Twilio para envios reais');
+        console.log('🎂 Sistema PM completo carregado!');
+        console.log('🎖️ Graduações PM configuradas');
+        console.log('⏰ Sistema de agendamento ativo');
     </script>
 </body>
 </html>
